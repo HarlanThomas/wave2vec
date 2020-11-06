@@ -1,8 +1,8 @@
 <p align="center">
   <img src="docs/fairseq_logo.png" width="150">
+  <br />
+  <br />
   <!--
-  <br />
-  <br />
   <a href="https://github.com/pytorch/fairseq/blob/master/LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
   <a href="https://github.com/pytorch/fairseq/releases"><img alt="Latest Release" src="https://img.shields.io/github/release/pytorch/fairseq.svg" /></a>
   <a href="https://github.com/pytorch/fairseq/actions?query=workflow:build"><img alt="Build Status" src="https://github.com/pytorch/fairseq/workflows/build/badge.svg" /></a>
@@ -12,6 +12,10 @@
 
 --------------------------------------------------------------------------------
 This git is a reproduce work for FAcebook's fairseq. The code is originally from https://github.com/pytorch/fairseq
+
+中文描述
+
+-- 要新下载模型
 
 Fairseq(-py) is a sequence modeling toolkit that allows researchers and
 developers to train custom models for translation, summarization, language
