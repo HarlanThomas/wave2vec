@@ -16,6 +16,7 @@ This git is a reproduce work for FAcebook's fairseq. The code is originally from
 中文描述
 
 - 要新下载模型
+- 需要新建数据集分割列表
 
 Fairseq(-py) is a sequence modeling toolkit that allows researchers and
 developers to train custom models for translation, summarization, language
