@@ -20,6 +20,12 @@ This git is a reproduce work for FAcebook's fairseq. The code is originally from
 - 更改了 libri_label.py 数据库
 - 注意安装fairseq 的版本，采用20201031的版本可以跑通
 
+- 文件备注
+-- Harlan_Thomas/wav2vec 文件用于修改代码并且调参数
+-- semantic_commun 部分记录原先已经小修的代码
+-- fairseq 已经git pull 代表最新
+-- fairseq_20201031 10月31日版本代码
+
 Fairseq(-py) is a sequence modeling toolkit that allows researchers and
 developers to train custom models for translation, summarization, language
 modeling and other text generation tasks.
