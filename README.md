@@ -16,7 +16,9 @@ This git is a reproduce work for FAcebook's fairseq. The code is originally from
 中文描述
 
 - 要新下载模型
-- 需要新建数据集分割列表
+- 需要新建数据集分割列表 manifest 文件
+- 更改了 libri_label.py 数据库
+- 注意安装fairseq 的版本，采用20201031的版本可以跑通
 
 Fairseq(-py) is a sequence modeling toolkit that allows researchers and
 developers to train custom models for translation, summarization, language
