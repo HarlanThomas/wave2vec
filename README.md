@@ -27,6 +27,7 @@ This git is a reproduce work for FAcebook's fairseq. The code is originally from
 -- fairseq_20201031 10月31日版本代码
 - ASR系统参考
 -- install OpenCL
+
 Fairseq(-py) is a sequence modeling toolkit that allows researchers and
 developers to train custom models for translation, summarization, language
 modeling and other text generation tasks.
