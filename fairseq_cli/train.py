@@ -43,6 +43,8 @@ logger = logging.getLogger("fairseq_cli.train")
 
 
 def main(cfg: DictConfig) -> None:
+    # print('main_cfg:', cfg['common'])
+    # print('\n', cfg)
     if isinstance(cfg, argparse.Namespace):
         cfg = convert_namespace_to_omegaconf(cfg)
 
@@ -65,12 +67,13 @@ def main(cfg: DictConfig) -> None:
     task = tasks.setup_task(cfg.task)
     # Load valid dataset (we load training data below, based on the latest checkpoint)
     for valid_sub_split in cfg.dataset.valid_subset.split(','):
+        print('valid_sub_split:', valid_sub_split)
         task.load_dataset(valid_sub_split, combine=False, epoch=1)
 
     # Build model and criterion
     model = task.build_model(cfg.model)
     criterion = task.build_criterion(cfg.criterion)
-    logger.info(model)
+    # logger.info(model)
     logger.info("task: {} ({})".format(cfg.task._name, task.__class__.__name__))
     logger.info("model: {} ({})".format(cfg.model._name, model.__class__.__name__))
     logger.info(
@@ -116,12 +119,28 @@ def main(cfg: DictConfig) -> None:
     lr = trainer.get_lr()
     train_meter = meters.StopwatchMeter()
     train_meter.start()
+    
     while (
         lr > cfg.optimization.min_lr
         and epoch_itr.next_epoch_idx <= max_epoch
     ):
+
+        # add FL here to combine two models updated as trainer
+        FL_cycle = 1000
+        if (cfg.task._name == "FL_training" \
+            and epoch_itr.epoch > FL_cycle \
+            and epoch_itr.epoch % FL_cycle == 0):
+
+            model = fl_two(cfg.checkpoint.save_dir[:-1] + '1' + '/checkpoint_last.pt',
+                    cfg.checkpoint.save_dir[:-1] + '2' + '/checkpoint_last.pt')
+            trainer = Trainer(cfg, task, model, criterion, quantizer)
+            print("\n |********| \n|FL_ed| \n |********| \n")
+        
         # train for one epoch
         valid_losses, should_stop = train(cfg, trainer, task, epoch_itr)
+        print("\n???? valid_losses:", valid_losses, "\n???")
+        print("???? epoch_itr.next_epoch_idx:", epoch_itr.next_epoch_idx, "\n???")
+
         if should_stop:
             break
 
@@ -137,6 +156,31 @@ def main(cfg: DictConfig) -> None:
         )
     train_meter.stop()
     logger.info("done training in {:.1f} seconds".format(train_meter.sum))
+
+
+# Federated Learning for  two models
+def fl_two(m1: str, m2:str):
+    from fairseq.models.wav2vec import Wav2VecdecoderModel, Wav2VecAutoEncoderModel
+
+    cp1 = torch.load(m1)
+    cp2 = torch.load(m2)
+    model1 = Wav2VecAutoEncoderModel.build_model(cp1['cfg']['model'], task=None)
+    model2 = Wav2VecAutoEncoderModel.build_model(cp2['cfg']['model'], task=None)
+    
+    para1 = cp1['model']
+    para2 = cp2['model']
+    
+    for key in para1.keys():
+        para1[key] = (para1[key] + para2[key]) / 2
+    cp3 = cp1
+    cp3['model'] = para1
+    
+    model = Wav2VecAutoEncoderModel.build_model(cp1['cfg']['model'], task=None)
+    model.load_state_dict(cp3['model'])
+    return model
+
+
+
 
 
 def should_stop_early(cfg: DictConfig, valid_loss: float) -> bool:
@@ -191,14 +235,15 @@ def train(cfg: DictConfig, trainer: Trainer, task: tasks.FairseqTask, epoch_itr)
     )
 
     trainer.begin_epoch(epoch_itr.epoch)
-
     valid_subsets = cfg.dataset.valid_subset.split(',')
     should_stop = False
     num_updates = trainer.get_num_updates()
+    print("|Progress|", progress)
     for i, samples in enumerate(progress):
         with metrics.aggregate("train_inner"), torch.autograd.profiler.record_function(
             "train_step-%d" % i
         ):
+            # print("****samples_in_train.py", samples)
             log_output = trainer.train_step(samples)
 
         if log_output is not None:  # not OOM, overflow, ...
@@ -293,7 +338,7 @@ def validate(cfg: DictConfig, trainer: Trainer, task: tasks.FairseqTask, epoch_i
     valid_losses = []
     for subset in subsets:
         logger.info('begin validation on "{}" subset'.format(subset))
-
+        print("*******\n*****\n****\n**\n*\n************| Valid loss |*************\n")
         # Initialize data iterator
         itr = trainer.get_valid_iterator(subset).next_epoch_itr(shuffle=False)
         if cfg.common.tpu:
@@ -336,11 +381,14 @@ def get_valid_stats(cfg: DictConfig, trainer: Trainer, stats: Dict[str, Any]) ->
 
 
 def cli_main(modify_parser: Optional[Callable[[argparse.ArgumentParser], None]] = None) -> None:
+    # print('input:', modify_parser) # None
     parser = options.get_training_parser()
+    print('parser:', parser)
+    print('\n modify_parser', modify_parser)
     args = options.parse_args_and_arch(parser, modify_parser=modify_parser)
-
+    # print('args', args)
     cfg = convert_namespace_to_omegaconf(args)
-
+    # print('cfg:', cfg)
     if args.profile:
         with torch.cuda.profiler.profile():
             with torch.autograd.profiler.emit_nvtx():

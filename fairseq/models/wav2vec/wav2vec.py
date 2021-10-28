@@ -349,8 +349,9 @@ class Wav2VecModel(BaseFairseqModel):
 
     def forward(self, source):
         result = {}
-
-        features = self.feature_extractor(source)
+        print('source:', source.shape)
+        features = self.feature_extractor(source)   # z
+        print('extraed_features:', features.shape)
         if self.vector_quantizer:
             q_res = self.vector_quantizer(features)
             features = q_res["x"]
@@ -361,7 +362,7 @@ class Wav2VecModel(BaseFairseqModel):
         x = self.dropout_feats(features)
         x = self.feature_aggregator(x)
         x = self.dropout_agg(x)
-
+        print('aggre_feats_S', x.shape)
         if self.project_features is not None:
             features = self.project_features(features)
         x, targets = self.wav2vec_predictions(x, features)

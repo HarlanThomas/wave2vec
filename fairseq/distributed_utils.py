@@ -314,6 +314,8 @@ def call_main(cfg: FairseqConfig, main, **kwargs):
         )
     else:
         # single GPU main
+        # print('in call main cfg:', cfg, )
+        # print('\n in call main kwarg:', **kwargs)
         main(cfg, **kwargs)
 
 

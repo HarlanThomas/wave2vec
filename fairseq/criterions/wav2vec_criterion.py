@@ -67,6 +67,7 @@ class Wav2vecCriterion(FairseqCriterion):
             )
 
         sample_size = target.numel() if self.infonce else target.long().sum().item()
+        print("|****sample_size|", sample_size, target.shape)
         losses.append(loss.detach().clone())
 
         if self.loss_weights is not None:

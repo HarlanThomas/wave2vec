@@ -48,12 +48,11 @@ def main(args):
     assert args.valid_percent >= 0 and args.valid_percent <= 1.0
 
     dir_path = os.path.realpath(args.root)
-    search_path = os.path.join(dir_path, "**/*." + args.ext)
+    search_path = os.path.join(dir_path, "**/84-*." + args.ext)
     rand = random.Random(args.seed)
 
     with open(os.path.join(args.dest, "train.tsv"), "w") as train_f, open(
-        os.path.join(args.dest, "valid.tsv"), "w"
-    ) as valid_f:
+        os.path.join(args.dest, "valid.tsv"), "w") as valid_f:
         print(dir_path, file=train_f)
         print(dir_path, file=valid_f)
 
@@ -62,12 +61,20 @@ def main(args):
 
             if args.path_must_contain and args.path_must_contain not in file_path:
                 continue
-
-            frames = soundfile.info(fname).frames
-            dest = train_f if rand.random() > args.valid_percent else valid_f
-            print(
-                "{}\t{}".format(os.path.relpath(file_path, dir_path), frames), file=dest
-            )
+            if fname.split('.')[-1] == 'flac' or fname.split('.')[-1] == 'wav':
+                # print(fname.split('.')[-1], fname.split('.')[-1] == 'flac' or 'wav', file=train_f)
+                frames = soundfile.info(fname).frames
+                dest = train_f if rand.random() > args.valid_percent else valid_f
+                print(
+                    "{}\t{}".format(os.path.relpath(file_path, dir_path), frames), file=dest
+                )
+            else: # process embedding
+                import numpy
+                frames = len(numpy.loadtxt(fname))
+                dest = train_f if rand.random() > args.valid_percent else valid_f
+                print(
+                    "{}\t{}".format(os.path.relpath(file_path, dir_path), frames), file=dest
+                )
 
 
 if __name__ == "__main__":

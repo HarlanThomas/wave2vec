@@ -519,6 +519,8 @@ class LegacyFairseqTask(FairseqTask):
         self.args = args
         self.datasets = {}
         self.dataset_to_epoch_iter = {}
+        self.label_path = ''
+
 
     @classmethod
     def setup_task(cls, args: Namespace, **kwargs):

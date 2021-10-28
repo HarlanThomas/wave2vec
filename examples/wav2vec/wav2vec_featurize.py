@@ -63,7 +63,7 @@ class EmbeddingWriterConfig(argparse.ArgumentParser):
         self.add_argument("--model", help="Path to model checkpoint", **kwargs)
         self.add_argument("--split", help="Dataset Splits", nargs="+", **kwargs)
         self.add_argument(
-            "--ext", default="wav", required=False, help="Audio file extension"
+            "--ext", default="flac", required=False, help="Audio file extension"
         )
 
         self.add_argument(
@@ -201,7 +201,7 @@ class EmbeddingDatasetWriter(object):
 
         fnames_context = map(
             lambda x: os.path.join(
-                self.output_path, x.replace("." + self.extension, ".h5context")
+                self.output_path, x.replace("." + self.extension, ".h5")
             ),
             map(os.path.basename, paths),
         )

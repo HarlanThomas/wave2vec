@@ -28,14 +28,22 @@ def main():
     ) as ltr_out, open(
         os.path.join(args.output_dir, args.output_name + ".wrd"), "w"
     ) as wrd_out:
+        # cnt = 0
         root = next(tsv).strip()
         for line in tsv:
-            line = line.strip()
-            dir = os.path.dirname(line)
+            # cnt += 1
+            # print(cnt)
+            # line = line.strip()   # change the dirname retrieve way in 2020/11/16
+            # dir = os.path.dirname(line)
+            line = line.split('\t')[0]
+            dir = line
             if dir not in transcriptions:
-                parts = dir.split(os.path.sep)
-                trans_path = f"{parts[-2]}-{parts[-1]}.trans.txt"
-                path = os.path.join(root, dir, trans_path)
+                # parts = dir.split(os.path.sep)
+                # trans_path = f"{parts[-2]}-{parts[-1]}.trans.txt"
+                # path = os.path.join(root, dir, trans_path)
+                parts = dir.split('-')
+                trans_path = f"{parts[-3]}-{parts[-2]}.trans.txt"
+                path = os.path.join(root, trans_path)
                 assert os.path.exists(path)
                 texts = {}
                 with open(path, "r") as trans_f:

@@ -41,6 +41,9 @@ class RawAudioDataset(FairseqDataset):
         self.pad = pad
         self.shuffle = shuffle
         self.normalize = normalize
+        # raw data processed added on 2nd Feb 2021 by thn
+        self.feature_dim = 32
+        self.time_compress_rete = 160
 
     def __getitem__(self, index):
         raise NotImplementedError()
@@ -63,12 +66,26 @@ class RawAudioDataset(FairseqDataset):
         return feats
 
     def crop_to_max_size(self, wav, target_size):
+        # when raw audio is smaller than target_size
+        size = len(wav)
+        diff = size - target_size
+        if diff <= 0:
+            return wav, 0
+
+        start = np.random.randint(0, diff + 1)
+        end = size - diff + start
+        return wav[start:end], start
+
+    
+
+    def crop_to_max_size_decoder(self, wav, target_size, start_of_eb):
+        # according to embedding's starting, cut raw audio data
         size = len(wav)
         diff = size - target_size
         if diff <= 0:
             return wav
-
-        start = np.random.randint(0, diff + 1)
+        
+        start = start_of_eb # // 512
         end = size - diff + start
         return wav[start:end]
 
@@ -79,33 +96,45 @@ class RawAudioDataset(FairseqDataset):
 
         sources = [s["source"] for s in samples]
         sizes = [len(s) for s in sources]
-
+        label_sources = [s["label"] for s in samples]
+        print()
         if self.pad:
             target_size = min(max(sizes), self.max_sample_size)
         else:
             target_size = min(min(sizes), self.max_sample_size)
-
+        # print("*****Target_S", target_size)    # commented on 0302
+        
         collated_sources = sources[0].new_zeros(len(sources), target_size)
+        label_collated_sources = label_sources[0].new_zeros(len(label_sources), target_size) #  //512*160)
+
         padding_mask = (
             torch.BoolTensor(collated_sources.shape).fill_(False) if self.pad else None
         )
-        for i, (source, size) in enumerate(zip(sources, sizes)):
+        for i, (source, size, label_sources) in enumerate(zip(sources, sizes, label_sources)):
             diff = size - target_size
             if diff == 0:
                 collated_sources[i] = source
+                collated_sources[i] = label_sources
             elif diff < 0:
                 assert self.pad
                 collated_sources[i] = torch.cat(
                     [source, source.new_full((-diff,), 0.0)]
                 )
+                label_collated_sources[i] = torch.cat(
+                    [label_sources, label_sources.new_full((-diff,), 0.0)]
+                )
                 padding_mask[i, diff:] = True
             else:
-                collated_sources[i] = self.crop_to_max_size(source, target_size)
-
+                collated_sources[i], start_eb = self.crop_to_max_size(source, target_size)
+                # print("label_sources",label_sources.shape, "target_size", target_size ) # 0302 commented
+                # label_collated_sources[i] = self.crop_to_max_size_decoder(label_sources, target_size//512*160, start_eb)
+                label_collated_sources[i] = self.crop_to_max_size_decoder(label_sources, target_size, start_eb)
         input = {"source": collated_sources}
+        label = {"label_source": label_collated_sources}
         if self.pad:
             input["padding_mask"] = padding_mask
-        return {"id": torch.LongTensor([s["id"] for s in samples]), "net_input": input}
+
+        return {"id": torch.LongTensor([s["id"] for s in samples]), "net_input": input, "label": label}
 
     def num_tokens(self, index):
         return self.size(index)
@@ -141,6 +170,7 @@ class FileAudioDataset(RawAudioDataset):
         min_length=0,
         pad=False,
         normalize=False,
+        
     ):
         super().__init__(
             sample_rate=sample_rate,
@@ -153,12 +183,14 @@ class FileAudioDataset(RawAudioDataset):
         )
 
         self.fnames = []
-
+        self.label_path = '/home/thn/audio_dataset/LibriSpeech/thn_train_clean/'
         skipped = 0
+        print('manifest_path:',manifest_path)
         with open(manifest_path, "r") as f:
             self.root_dir = f.readline().strip()
             for line in f:
                 items = line.strip().split("\t")
+                print('\n', items)
                 assert len(items) == 2, line
                 sz = int(items[1])
                 if min_length is not None and sz < min_length:
@@ -167,12 +199,29 @@ class FileAudioDataset(RawAudioDataset):
                 self.fnames.append(items[0])
                 self.sizes.append(sz)
         logger.info(f"loaded {len(self.fnames)}, skipped {skipped} samples")
-
+        logger.info(f"{self.fnames}")
     def __getitem__(self, index):
         import soundfile as sf
-
+        
         fname = os.path.join(self.root_dir, self.fnames[index])
-        wav, curr_sample_rate = sf.read(fname)
-        feats = torch.from_numpy(wav).float()
-        feats = self.postprocess(feats, curr_sample_rate)
-        return {"id": index, "source": feats}
+        # print('***fname', fname)
+        if self.fnames[index].split('.')[-1] == 'flac':
+            wav, curr_sample_rate = sf.read(fname)
+            feats = torch.from_numpy(wav).float()
+            feats = self.postprocess(feats, curr_sample_rate)
+            # print("**len(wav)", len(wav), "***|feats|", feats.shape)
+        else:
+            import numpy as np
+            embed = np.loadtxt(fname)
+            feats = torch.from_numpy(embed).float()
+            # print("***|feats_S|", feats.shape)
+
+        
+        l_fname = os.path.join(self.label_path, self.fnames[index].split('.')[0] + '.flac')
+        label_wav, curr_sample_rate = sf.read(l_fname)
+        label_feats = torch.from_numpy(label_wav).float()
+        label_feats = self.postprocess(label_feats, curr_sample_rate)
+        # logger.info(f" ****|source_audio_file_sz|:{feats.shape}")
+        # print('\n ****|source_audio_file_S|:', feats.shape)
+
+        return {"id": index, "source": feats, "label": label_feats}
