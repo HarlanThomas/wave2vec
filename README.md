@@ -11,7 +11,7 @@
 </p>
 
 --------------------------------------------------------------------------------
-This git is a reproduce work for Facebook's Fairseq. The code is originally from https://github.com/pytorch/fairseq
+An Auto-encoder for audio semantic communication, based on wav2vec at the platfrom of facebook's Fairseq. The Fairseq code is originally from https://github.com/pytorch/fairseq
 
 中文描述
 
