@@ -69,8 +69,8 @@ The [full documentation](https://fairseq.readthedocs.io/) contains instructions
 for getting started, training new models and extending fairseq with new model
 types and tasks.
 
-<!--
 # Pre-trained models and examples
+<!--
 
 
 We provide pre-trained models and pre-processed, binarized test sets for several tasks listed below,
@@ -91,7 +91,9 @@ We also have more detailed READMEs to reproduce results from specific papers:
 - [Levenshtein Transformer (Gu et al., 2019)](examples/nonautoregressive_translation/README.md)
 - [Facebook FAIR's WMT19 News Translation Task Submission (Ng et al., 2019)](examples/wmt19/README.md)
 - [RoBERTa: A Robustly Optimized BERT Pretraining Approach (Liu et al., 2019)](examples/roberta/README.md)
+-->
 - [wav2vec: Unsupervised Pre-training for Speech Recognition (Schneider et al., 2019)](examples/wav2vec/README.md)
+<!--
 - [Mixture Models for Diverse Machine Translation: Tricks of the Trade (Shen et al., 2019)](examples/translation_moe/README.md)
 - [Pay Less Attention with Lightweight and Dynamic Convolutions (Wu et al., 2019)](examples/pay_less_attention_paper/README.md)
 - [Understanding Back-Translation at Scale (Edunov et al., 2018)](examples/backtranslation/README.md)
