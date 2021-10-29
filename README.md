@@ -71,15 +71,13 @@ types and tasks.
 
 # Pre-trained models and examples
 
-[//]: // (one para of comment
+<!--
 We provide pre-trained models and pre-processed, binarized test sets for several tasks listed below,
-as well as example training and evaluation commands.)
+as well as example training and evaluation commands.
 
-[//]: // (one para of comment
 - [Translation](examples/translation/README.md): convolutional and transformer models are available
-- [Language Modeling](examples/language_model/README.md): convolutional and transformer models are available )
+- [Language Modeling](examples/language_model/README.md): convolutional and transformer models are available 
 
-[//]: // (one para of comment
 We also have more detailed READMEs to reproduce results from specific papers:
 - [Cross-lingual Retrieval for Iterative Self-Supervised Training (Tran et al., 2020)](examples/criss/README.md)
 - [wav2vec 2.0: A Framework for Self-Supervised Learning of Speech Representations (Baevski et al., 2020)](examples/wav2vec/README.md)
@@ -100,7 +98,8 @@ We also have more detailed READMEs to reproduce results from specific papers:
 - [Hierarchical Neural Story Generation (Fan et al., 2018)](examples/stories/README.md)
 - [Scaling Neural Machine Translation (Ott et al., 2018)](examples/scaling_nmt/README.md)
 - [Convolutional Sequence to Sequence Learning (Gehring et al., 2017)](examples/conv_seq2seq/README.md)
-- [Language Modeling with Gated Convolutional Networks (Dauphin et al., 2017)](examples/language_model/conv_lm/README.md) )
+- [Language Modeling with Gated Convolutional Networks (Dauphin et al., 2017)](examples/language_model/conv_lm/README.md) 
+-->
 
 #  Fairseq community
 
