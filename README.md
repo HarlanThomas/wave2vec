@@ -104,8 +104,8 @@ We also have more detailed READMEs to reproduce results from specific papers:
 - [Language Modeling with Gated Convolutional Networks (Dauphin et al., 2017)](examples/language_model/conv_lm/README.md) 
 -->
 
-# Semantic communication
-  * train a model 
+# Semantic communication Auto-encoder
+  * Train a model 
   ``` python
 python train.py ./manifest/dev-other --save-dir ./w2v_thn/Rice_decoder/0623_tanh_tdiv2_feat8_6dB_Rice0_8_NR_redo --num-workers 1 --fp16 --max-update 40000 --save-interval 1 --no-epoch-checkpoints \
 --arch w2vAutoEncoder --task decoder_training --lr 1e-05 --min-lr 1e-09 --optimizer adam --max-lr 0.005 --lr-scheduler cosine \
@@ -116,7 +116,7 @@ python train.py ./manifest/dev-other --save-dir ./w2v_thn/Rice_decoder/0623_tanh
 --skip-connections-agg --residual-scale 0.5  --warmup-updates 500 --warmup-init-lr 1e-03 --criterion wav2vecAuto_ecoder --num-negatives 10 \
 --max-sample-size  51200 --max-tokens 1000000 --skip-invalid-size-inputs-valid-test > ./decoder_log_0623_tanh_tdiv2_feat8_6dB_Rice0_8_NR_redo 2>&1 &
  ```
-  *  inference: see inference.ipynb
+  *  Inference the model: see  "inference.ipynb"
   
 #  Fairseq community
 
