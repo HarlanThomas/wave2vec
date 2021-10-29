@@ -2,13 +2,31 @@
   <img src="docs/fairseq_logo.png" width="150">
   <br />
   <br />
+  <!--
   <a href="https://github.com/pytorch/fairseq/blob/master/LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
   <a href="https://github.com/pytorch/fairseq/releases"><img alt="Latest Release" src="https://img.shields.io/github/release/pytorch/fairseq.svg" /></a>
   <a href="https://github.com/pytorch/fairseq/actions?query=workflow:build"><img alt="Build Status" src="https://github.com/pytorch/fairseq/workflows/build/badge.svg" /></a>
   <a href="https://fairseq.readthedocs.io/en/latest/?badge=latest"><img alt="Documentation Status" src="https://readthedocs.org/projects/fairseq/badge/?version=latest" /></a>
+  -->
 </p>
 
 --------------------------------------------------------------------------------
+This git is a reproduce work for FAcebook's fairseq. The code is originally from https://github.com/pytorch/fairseq
+
+中文描述
+
+- 要新下载模型
+- 需要新建数据集分割列表 manifest 文件
+- 更改了 libri_label.py 数据库
+- 注意安装fairseq 的版本，采用20201031的版本可以跑通
+
+- 文件备注
+-- Harlan_Thomas/wav2vec 文件用于修改代码并且调参数
+-- semantic_commun 部分记录原先已经小修的代码
+-- fairseq 已经git pull 代表最新
+-- fairseq_20201031 10月31日版本代码
+- ASR系统参考
+-- install OpenCL
 
 Fairseq(-py) is a sequence modeling toolkit that allows researchers and
 developers to train custom models for translation, summarization, language
