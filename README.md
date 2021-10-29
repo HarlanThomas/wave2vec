@@ -11,7 +11,7 @@
 </p>
 
 --------------------------------------------------------------------------------
-This git is a reproduce work for FAcebook's fairseq. The code is originally from https://github.com/pytorch/fairseq
+This git is a reproduce work for Facebook's Fairseq. The code is originally from https://github.com/pytorch/fairseq
 
 中文描述
 
