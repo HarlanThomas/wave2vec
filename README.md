@@ -69,9 +69,10 @@ The [full documentation](https://fairseq.readthedocs.io/) contains instructions
 for getting started, training new models and extending fairseq with new model
 types and tasks.
 
+<!--
 # Pre-trained models and examples
 
-<!--
+
 We provide pre-trained models and pre-processed, binarized test sets for several tasks listed below,
 as well as example training and evaluation commands.
 
