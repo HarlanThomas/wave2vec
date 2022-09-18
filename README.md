@@ -116,7 +116,28 @@ python train.py ./manifest/dev-other --save-dir ./w2v_thn/Rice_decoder/0623_tanh
 --skip-connections-agg --residual-scale 0.5  --warmup-updates 500 --warmup-init-lr 1e-03 --criterion wav2vecAuto_ecoder --num-negatives 10 \
 --max-sample-size  51200 --max-tokens 1000000 --skip-invalid-size-inputs-valid-test > ./decoder_log_0623_tanh_tdiv2_feat8_6dB_Rice0_8_NR_redo 2>&1 &
  ```
-  *  Inference the model: see  "inference.ipynb"
+   * Train a Federated Learning model, change into "--task FL_training"
+  ``` python
+python train.py ./manifest/FL_1_dev_other --save-dir ./w2v_thn/FL_AutoEncoder/0801_tdiv1_feat8_6dB_NR_10eFL1 --num-workers 1 --fp16 --max-update 20000 --save-interval 1 --no-epoch-checkpoints \
+--arch w2vAutoEncoder --task FL_training --lr 1e-05 --min-lr 1e-09 --optimizer adam --max-lr 0.005 --lr-scheduler cosine \
+--conv-feature-layers '[(8, 1, 1), (8, 2, 1), (8, 4, 1), (1, 1, 1)]' \
+--conv-aggregator-layers '[(8, 2, 1), (8, 4, 1), (8, 8, 1), (8, 16, 1)]' \
+--conv-feature-layers_en '[(8, 1, 1), (8, 2, 1), (8, 4, 1)]' \
+--conv-aggregator-layers_en '[(8, 2, 1), (8, 4, 1), (8, 8, 1), (8, 16, 1)]' \
+--skip-connections-agg --residual-scale 0.5  --warmup-updates 500 --warmup-init-lr 1e-03 --criterion wav2vecAuto_ecoder_FL --num-negatives 10 \
+--max-sample-size  51200 --max-tokens 1000000 --skip-invalid-size-inputs-valid-test > ./FL_log_0801_tdiv1_feat8_6dB_NR_10eFL1_2 2>&1 &
+
+python train.py ./manifest/FL_2_dev_clean --save-dir ./w2v_thn/FL_AutoEncoder/0801_tdiv1_feat8_6dB_NR_10eFL2 --num-workers 1 --fp16 --max-update 20000 --save-interval 1 --no-epoch-checkpoints \
+--arch w2vAutoEncoder --task FL_training --lr 1e-05 --min-lr 1e-09 --optimizer adam --max-lr 0.005 --lr-scheduler cosine \
+--conv-feature-layers '[(8, 1, 1), (8, 2, 1), (8, 4, 1), (1, 1, 1)]' \
+--conv-aggregator-layers '[(8, 2, 1), (8, 4, 1), (8, 8, 1), (8, 16, 1)]' \
+--conv-feature-layers_en '[(8, 1, 1), (8, 2, 1), (8, 4, 1)]' \
+--conv-aggregator-layers_en '[(8, 2, 1), (8, 4, 1), (8, 8, 1), (8, 16, 1)]' \
+--skip-connections-agg --residual-scale 0.5  --warmup-updates 500 --warmup-init-lr 1e-03 --criterion wav2vecAuto_ecoder_FL --num-negatives 10 \
+--max-sample-size  51200 --max-tokens 1000000 --skip-invalid-size-inputs-valid-test > ./FL_log_0801_tdiv1_feat8_6dB_NR_10eFL2_2 2>&1 &
+
+  ```
+  *  Inference the model: see  "xxx_inference.ipynb"
   
 #  Fairseq community
 
